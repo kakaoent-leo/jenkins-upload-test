@@ -3,7 +3,8 @@ pipeline {
 
     environment {
         // 환경 변수로 Credential ID 지정
-        // GOOGLE_APPLICATION_CREDENTIALS = credentials('GOOGLE_APPLICATION_CREDENITALS')
+        GOOGLE_APPLICATION_CREDENTIALS_JSON = file('GOOGLE_APPLICATION_CREDENITALS')
+        
         project = "dev-melon-fan-platform-project"
         bucket = "dev-melon-fan-platform-kor-bucket"
     }
@@ -12,6 +13,18 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+
+        stage('Store to GCS') {
+            steps{
+                // If we name pattern build_environment.txt, this will upload the local file to our GCS bucket.
+                step([
+                        $class: 'ClassicUploadStep', 
+                        credentialsId: "GCP_KEY",  
+                        bucket: "gs://${bucket}",
+                        pattern: "**/api-spec.yml"
+                    ])
             }
         }
 
