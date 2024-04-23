@@ -17,7 +17,7 @@ pipeline {
 
         stage("set gcloud, gsutil"){
             steps{
-                sh("""export PATH="$HOME/gcloud-sdk/bin:$PATH" """)
+                sh("""export PATH="$HOME/google-cloud-sdk/bin:$PATH" """)
                 
             }
         }
