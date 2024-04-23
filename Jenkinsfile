@@ -19,7 +19,7 @@ pipeline {
             steps{
                 step([
                         $class: 'ClassicUploadStep', 
-                        credentialsId: ${credentialsId},  
+                        credentialsId: "${credentialsId}",  
                         bucket: "gs://${bucket}/swagger_test/melon-fan-lounge",
                         pattern: "**/api-spec.yml"
                     ])
