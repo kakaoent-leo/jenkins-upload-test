@@ -1,42 +1,41 @@
 pipeline {
-    agent any  // 어떤 환경에서든 실행
+    agent any
 
     environment {
-        MY_VARIABLE = "some-value"
+        // 환경 변수로 Credential ID 지정
+        GOOGLE_APPLICATION_CREDENTIALS = credentials('GOOGLE_APPLICATION_CREDENITALS')
     }
 
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                echo 'Building..'
-                // 빌드 명령 실행
-                sh 'make'
+                checkout scm
             }
         }
-        stage('Test') {
+
+        stage('Authenticate with GCP') {
             steps {
-                echo 'Testing..'
-                // 테스트 명령 실행
-                sh 'make test'
+                script {
+                    // gcloud 명령어를 사용하여 인증
+                    sh "gcloud auth activate-service-account --key-file=${env.GOOGLE_APPLICATION_CREDENTIALS}"
+                }
             }
         }
-        stage('Deploy') {
+
+        stage('Upload to GCS') {
             steps {
-                echo 'Deploying..'
-                // 배포 명령 실행
-                sh 'make deploy'
+                script {
+                    // Set environment variables or use Jenkins credentials
+                    
+                    sh '''
+                    gcloud config set dev-melon-fan-platform-project
+
+                    # Upload files to GCS
+                    gsutil cp admin-api/api-spec.yml dev-melon-fan-platform-kor-bucket/leo-test/admin-api/api-spec.yml
+                    gsutil cp rest-api/api-spec.yml dev-melon-fan-platform-kor-bucket/leo-test/rest-api/api-spec.yml
+                    '''
+                }
             }
-        }
-    }
-    post {
-        always {
-            echo 'This will always run'
-        }
-        success {
-            echo 'This will run only if successful'
-        }
-        failure {
-            echo 'This will run only if failed'
         }
     }
 }
