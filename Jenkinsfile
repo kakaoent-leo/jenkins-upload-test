@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // 환경 변수로 Credential ID 지정
-        GOOGLE_APPLICATION_CREDENTIALS = credentials('GOOGLE_APPLICATION_CREDENITALS')
+        // GOOGLE_APPLICATION_CREDENTIALS = credentials('GOOGLE_APPLICATION_CREDENITALS')
     }
 
     stages {
@@ -15,10 +15,15 @@ pipeline {
 
         stage('Authenticate with GCP') {
             steps {
-                script {
-                    // gcloud 명령어를 사용하여 인증
-                    sh "gcloud auth activate-service-account --key-file=${env.GOOGLE_APPLICATION_CREDENTIALS}"
+                withCredentials([file(credentialsId: 'GOOGLE_APPLICATION_CREDENITALS', variable: 'GOOGLE_APPLICATION_CREDENITALS')]) {
+                    sh("gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENITALS}")
+                    sh("gcloud config set dev-melon-fan-platform-project")
                 }
+
+                // script {
+                //     // gcloud 명령어를 사용하여 인증
+                //     sh "gcloud auth activate-service-account --key-file=${env.GOOGLE_APPLICATION_CREDENTIALS}"
+                // }
             }
         }
 
@@ -27,13 +32,9 @@ pipeline {
                 script {
                     // Set environment variables or use Jenkins credentials
                     
-                    sh '''
-                    gcloud config set dev-melon-fan-platform-project
-
-                    # Upload files to GCS
-                    gsutil cp admin-api/api-spec.yml dev-melon-fan-platform-kor-bucket/leo-test/admin-api/api-spec.yml
-                    gsutil cp rest-api/api-spec.yml dev-melon-fan-platform-kor-bucket/leo-test/rest-api/api-spec.yml
-                    '''
+                    sh("gsutil cp admin-api/api-spec.yml dev-melon-fan-platform-kor-bucket/leo-test/admin-api/api-spec.yml")
+                    sh("gsutil cp rest-api/api-spec.yml dev-melon-fan-platform-kor-bucket/leo-test/rest-api/api-spec.yml")
+                    
                 }
             }
         }
