@@ -4,6 +4,8 @@ pipeline {
     environment {
         // 환경 변수로 Credential ID 지정
         // GOOGLE_APPLICATION_CREDENTIALS = credentials('GOOGLE_APPLICATION_CREDENITALS')
+        project = "dev-melon-fan-platform-project"
+        bucket = "dev-melon-fan-platform-kor-bucket"
     }
 
     stages {
@@ -17,7 +19,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'GOOGLE_APPLICATION_CREDENITALS', variable: 'GOOGLE_APPLICATION_CREDENITALS')]) {
                     sh("gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENITALS}")
-                    sh("gcloud config set dev-melon-fan-platform-project")
+                    sh("gcloud config set ${project}")
                 }
 
                 // script {
@@ -32,8 +34,8 @@ pipeline {
                 script {
                     // Set environment variables or use Jenkins credentials
                     
-                    sh("gsutil cp admin-api/api-spec.yml dev-melon-fan-platform-kor-bucket/leo-test/admin-api/api-spec.yml")
-                    sh("gsutil cp rest-api/api-spec.yml dev-melon-fan-platform-kor-bucket/leo-test/rest-api/api-spec.yml")
+                    sh("gsutil cp admin-api/api-spec.yml ${bucket}/leo-test/admin-api/api-spec.yml")
+                    sh("gsutil cp rest-api/api-spec.yml ${bucket}/leo-test/rest-api/api-spec.yml")
                     
                 }
             }
