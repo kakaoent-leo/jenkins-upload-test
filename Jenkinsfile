@@ -15,6 +15,13 @@ pipeline {
             }
         }
 
+        stage("set gcloud, gsutil"){
+            steps{
+                sh("""export PATH="$HOME/gcloud-sdk/bin:$PATH" """)
+                
+            }
+        }
+
         stage('Authenticate with GCP') {
             steps {
                 withCredentials([file(credentialsId: 'GOOGLE_APPLICATION_CREDENITALS', variable: 'GOOGLE_APPLICATION_CREDENITALS')]) {
