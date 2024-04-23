@@ -22,43 +22,43 @@ pipeline {
                 step([
                         $class: 'ClassicUploadStep', 
                         credentialsId: "GCP_KEY",  
-                        bucket: "gs://${bucket}",
+                        bucket: "gs://${bucket}/swagger_leo_test/melon-fan-lounge",
                         pattern: "**/api-spec.yml"
                     ])
             }
         }
 
-        stage("set gcloud, gsutil"){
-            steps{
-                sh("""export PATH="$HOME/google-cloud-sdk/bin:$PATH" """)
+        // stage("set gcloud, gsutil"){
+        //     steps{
+        //         sh("""export PATH="$HOME/google-cloud-sdk/bin:$PATH" """)
                 
-            }
-        }
+        //     }
+        // }
 
-        stage('Authenticate with GCP') {
-            steps {
-                withCredentials([file(credentialsId: 'GOOGLE_APPLICATION_CREDENITALS', variable: 'GOOGLE_APPLICATION_CREDENITALS')]) {
-                    sh("gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENITALS}")
-                    sh("gcloud config set ${project}")
-                }
+        // stage('Authenticate with GCP') {
+        //     steps {
+        //         withCredentials([file(credentialsId: 'GOOGLE_APPLICATION_CREDENITALS', variable: 'GOOGLE_APPLICATION_CREDENITALS')]) {
+        //             sh("gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENITALS}")
+        //             sh("gcloud config set ${project}")
+        //         }
 
-                // script {
-                //     // gcloud 명령어를 사용하여 인증
-                //     sh "gcloud auth activate-service-account --key-file=${env.GOOGLE_APPLICATION_CREDENTIALS}"
-                // }
-            }
-        }
+        //         // script {
+        //         //     // gcloud 명령어를 사용하여 인증
+        //         //     sh "gcloud auth activate-service-account --key-file=${env.GOOGLE_APPLICATION_CREDENTIALS}"
+        //         // }
+        //     }
+        // }
 
-        stage('Upload to GCS') {
-            steps {
-                script {
-                    // Set environment variables or use Jenkins credentials
+        // stage('Upload to GCS') {
+        //     steps {
+        //         script {
+        //             // Set environment variables or use Jenkins credentials
                     
-                    sh("gsutil cp admin-api/api-spec.yml ${bucket}/leo-test/admin-api/api-spec.yml")
-                    sh("gsutil cp rest-api/api-spec.yml ${bucket}/leo-test/rest-api/api-spec.yml")
+        //             sh("gsutil cp admin-api/api-spec.yml ${bucket}/leo-test/admin-api/api-spec.yml")
+        //             sh("gsutil cp rest-api/api-spec.yml ${bucket}/leo-test/rest-api/api-spec.yml")
                     
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
     }
 }
